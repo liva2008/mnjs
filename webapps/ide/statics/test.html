@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<script language="javascript">
+var ws = new WebSocket("ws://localhost:8080");
+ws.onopen = function() {
+	ws.send("Hello");  // Sends a message.
+};
+ws.onmessage = function(e) {
+	// Receives a message.
+	alert(e.data);
+};
+ws.onclose = function() {
+	alert("closed");
+};
+</script>
+</head>
+
+<body>
+
+</body>
+</html>

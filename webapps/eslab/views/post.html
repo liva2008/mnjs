@@ -1,0 +1,28 @@
+﻿<!--utf8编码-->
+<html>
+<head>
+<title>发布主题</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<script src="/eslab/statics/ckeditor/ckeditor.js"></script>
+<link rel="stylesheet" href="/eslab/statics/ckeditor/sample.css">
+</head>
+
+<body>
+<h1>嵌入式系统实验室</h1>
+<h2><div align="right">Embedded System Laboratory</div></h2>
+<hr>
+<div><a href="/eslab/index/home">首页</a> | <a href="/eslab/user/register">注册</a> | <a href="/eslab/user/login">登录</a></div>
+<hr>
+<h2> 发布主题 </h2>
+<h3>当前位置：{{parent}} >> {{child}}</h3>
+<form name="article" action="/eslab/article/add/{{parent}}/{{child}}" method="post" enctype="multipart/form-data">
+<div style="height:30px">主题标题：<input type="text" name="title" id="title" maxlength="255" size="80"></div>
+<div >主题内容：<textarea class="ckeditor" cols="80" id="content" name="content" rows="10"></textarea></div>
+<div style="height:30px">主题附件：<input type="file" name="apdfile"></div>
+<div style="height:30px"><input type="reset" value="重置" id="reset"> <input type="submit" value="发布" id="submit"></div>
+</form>
+<hr>
+<h3><div align="center">湖北师范学院物电学院电工电子实验中心</div></h3>
+<h3><div align="center">CopyRight @ 2013.10</div></h3>
+</body>
+</html>

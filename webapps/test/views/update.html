@@ -1,0 +1,19 @@
+﻿<!--utf8编码-->
+<html>
+<head>
+<title>用户修改</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<%view%>
+</head>
+
+<body>
+<h1> 用户修改 </h1>
+<form name="user" action="/test/user/mod/{{username}}" method="post">
+用户帐号：<input type="text" name="username" id="username" maxlength="100" value="{{username}}" disabled><br>
+输入密码：<input type="password" name="password" id="password" maxlength="100"><br>
+确认密码：<input type="password" name="confirmpassword" id="confirmpassword" maxlength="100"><br>
+电子邮箱：<input type="text" name="email" id="email" maxlength="100" value="{{email}}"><br>
+<input type="reset" value="重置" id="reset"> <input type="submit" value="修改" id="submit">
+</form>
+</body>
+</html>

@@ -1,0 +1,40 @@
+﻿<!--utf8编码-->
+<html>
+<head>
+<title>嵌入式系统实验室</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+</head>
+
+<body>
+<h1>嵌入式系统实验室</h1>
+<h2><div align="right">Embedded System Laboratory</div></h2>
+<hr>
+<div><a href="/eslab/index/home">首页</a> | <a href="/eslab/user/register">注册</a> | <a href="/eslab/user/login">登录</a> {{#sid}}<a href="/eslab/user/processlogout">退出</a>{{/sid}}</div>
+<hr>
+<h2>当前位置：{{parent}} >> {{child}} <a href="/eslab/article/post/{{parent}}/{{child}}">发布主题</a></h2>
+<h3 style="color:red">
+<ul>
+<li style="float:left;width:40%"><div>主题名称</div></li>
+<li style="float:left;width:20%"><div>主题作者</div></li>
+<li style="float:left;width:20%"><div>发布时间</div></li>
+<li style="float:left;width:10%"><div>阅读次数</div></li>
+<li style="float:left;width:10%"><div>评论数目</div></li>
+</ul>
+</h3>
+<br>
+{{#articles}}
+<ul>
+<li style="float:left;width:40%"><div><a href="/eslab/article/display/{{id}}">{{title}}</a></div></li>
+<li style="float:left;width:20%"><div>{{author}}</div></li>
+<li style="float:left;width:20%"><div>{{time}}</div></li>
+<li style="float:left;width:10%"><div>{{views}}</div></li>
+<li style="float:left;width:10%"><div>{{reply}}</</div></li></ul>
+</ul>
+<br>
+{{/articles}}
+<%page%>
+<hr>
+<h3><div align="center">湖北师范学院物电学院电工电子实验中心</div></h3>
+<h3><div align="center">CopyRight @ 2013.10</div></h3>
+</body>
+</html>

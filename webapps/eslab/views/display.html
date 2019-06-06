@@ -1,0 +1,43 @@
+﻿<!--utf8编码-->
+<html>
+<head>
+<title>显示主题</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<script src="/eslab/statics/ckeditor/ckeditor.js"></script>
+<link rel="stylesheet" href="/eslab/statics/ckeditor/sample.css">
+</head>
+
+<body>
+<h1>嵌入式系统实验室</h1>
+<h2><div align="right">Embedded System Laboratory</div></h2>
+<hr>
+<div><a href="/eslab/index/home">首页</a> | <a href="/eslab/user/register">注册</a> | <a href="/eslab/user/login">登录</a></div>
+<hr>
+<h3>当前位置：{{parent}} >> {{child}}</h3>
+<h2> <div align="center">{{title}}</div> </h2>
+<h4><div align="center">作者：{{author}} 查看：{{views}} 评论：{{reply}}</div></h4>
+<hr>
+<div align="left">{{content}}</div>
+附件列表
+{{#files}}
+<div><a href="/eslab/article/download/{{filename}}/{{extname}}">{{filename}}.{{extname}}</a> {{size}}</div>
+{{/files}}
+<div align="right">{{time}}</div>
+<hr>
+回复列表
+{{#comments}}
+<div>{{text}}</div>
+<div>{{user}} {{time}}</div>
+{{/comments}}
+
+<hr>
+
+<form name="comment" action="/eslab/article/reply/{{id}}" method="post">
+<div >回复：<textarea class="ckeditor" cols="80" id="text" name="text" rows="10"></textarea></div>
+<div style="height:30px"><input type="submit" value="回复" id="submit"></div>
+</form>
+<hr>
+<h3><div align="center">湖北师范学院物电学院电工电子实验中心</div></h3>
+<h3><div align="center">CopyRight @ 2013.10</div></h3>
+</body>
+</html>

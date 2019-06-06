@@ -1,0 +1,20 @@
+﻿<!--utf8编码-->
+<html>
+<head>
+<title>test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<%view%>
+</head>
+
+<body>
+{{helloworld}}
+<form name="hello" action="/test/index/test1" method="post">
+<input type="text" name="wd" id="kw" maxlength="100">
+<input type="submit" value="提 交" id="su">
+</form>
+{{#user}}
+<ul>{{name}}</ul>
+{{/user}}
+<%page%>
+</body>
+</html>

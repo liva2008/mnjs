@@ -1,0 +1,778 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<title>Function Plotter</title>
+	<style type="text/css">
+		body {
+			font-family: sans-serif;
+			margin: 0;
+		}
+		#topContainer {
+			position: fixed;
+			top: 20px;
+			left: 0;
+			width: 100%;
+			z-index: -2;
+			text-align: center;
+		}
+		#topBox {
+			display: inline-block;
+			position: relative;
+			top: 0;
+			left: 0;
+			background: rgba(255, 255, 255, 0.9);
+			padding: 0 10px;
+			z-index: 50;
+			text-align: left;
+		}
+		#topClose {
+			position: absolute;
+			top: 0;
+			right: 0;
+			padding: 2px;
+			width: 30px;
+			height: 30px;
+			font-weight: bold;
+			font-size: 24px;
+			text-align: center;
+		}
+		#topClose a, #topClose a:visited {
+			text-decoration: none;
+			color: #000;
+			display: block;
+			width: 100%;
+			height: 100%;
+			background: #eee;
+		}
+		#topClose a:focus {
+			color: #FF0;
+			background: #888;
+		}
+		#topClose a:hover {
+			color: #FF8;
+			background: #444;
+		}
+		#topClose a:active {
+			color: #000;
+			background: #F00;
+		}
+		#bottomContainer {
+			position: fixed;
+			bottom: 30px;
+			left: 0;
+			width: 100%;
+			z-index: -2;
+			text-align: center;
+		}
+		#bottomBox {
+			display: inline-block;
+			background: rgba(255, 255, 255, 0.9);
+			padding: 0 10px;
+			z-index: 50;
+		}
+		h1 {
+			font-size: 1.2em;
+			font-weight: bold;
+			text-align: center;
+		}
+		#mainCanvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -5;
+		}
+		.presetTable {
+			table-layout: fixed;
+			width: 40em;
+		}
+		.presetTable th, .presetTable td {
+			text-align: center;
+		}
+		.presetTable a {
+			display: block;
+			width: 95%;
+			margin: 0.1em;
+			padding: 0.2em;
+			background-color: #CCEDFF;
+			color: #002288;
+			text-decoration: none;
+		}
+		.presetTable a:hover {
+			background-color: #FFEDA1;
+			color: #4444ED;
+		}
+		.credit {
+			padding-bottom: 0.5em;
+			font-size: x-small;
+			color: #A1A1ED;
+			text-align: center;
+		}
+		.credit a, .credit a:visited {
+			text-decoration: none;
+		}
+		.credit a:hover, .credit a:focus {
+			text-decoration: underline;
+		}
+		#numPts {
+			margin-left: 10px;
+		}
+	</style>
+</head>
+<body>
+<div id="topContainer" onmousedown="clickCanvas(event);"><div id="topBox" onmousedown="return true;">
+	<div id="topClose"><a href="javascript:closeTopBox();">&#215;</a></div>
+	<h1>2D Function Plotter</h1>
+	<p>
+		<strong>Scroll:</strong> Click and drag. &nbsp; <strong>Stretch:</strong> Hold CTRL
+		and drag.<br />
+		<strong>Zoom:</strong> Hold SHIFT and drag, or drag another mouse button.
+	</p>
+	<div class="credit">by <a href="http://twitter.com/emackey" target="_blank">Ed Mackey</a>,
+		Jan 2010.  Updated July 2011.  Placed in the public domain.</div>
+</div></div>
+	
+<!--  The canvas size below is temporary, the code will reset it.  -->
+<canvas id="mainCanvas" width="10" height="10" onmousedown="clickCanvas(event);">
+It looks like your browser does not support Canvas.
+Try FireFox, Chrome, Opera, or Safari instead.
+</canvas>
+
+<div id="bottomContainer" onmousedown="clickCanvas(event);"><div id="bottomBox" onmousedown="return true;">
+	<p>
+	y = <input type="text" size="50" name="formula" id="formula" value="sin(x)" />
+	<input type="button" value="Plot" onclick="plot();" />
+	<span id="numPts"></span>
+	</p>
+
+
+	<table border="0" cellpadding="0" cellspacing="2" class="presetTable">
+	<tr><th colspan="4">Sample functions:</th></tr>
+	<tr><td><a href="javascript:showFormula('sin(x)', 0, 0, 13);">y = sin(x)</a></td>
+		<td><a href="javascript:showFormula('cos(x)', 0, 0, 13);">y = cos(x)</a></td>
+		<td><a href="javascript:showFormula('tan(x)', 0, 0, 7);">y = tan(x)</a></td>
+		<td><a href="javascript:showFormula('x * x', 0, 1.2, 4.2);">y = x * x</a></td></tr>
+	<tr><td><a href="javascript:showFormula('asin(x)', 0, 0, 4.8);">y = asin(x)</a></td>
+		<td><a href="javascript:showFormula('acos(x)', 0, pi / 2, 4.8);">y = acos(x)</a></td>
+		<td><a href="javascript:showFormula('atan(x)', 0, 0, 13);">y = atan(x)</a></td>
+		<td><a href="javascript:showFormula('pow(x, 3)', 0, 0, 4.8);">y = pow(x, 3)</a></td></tr>
+	<tr><td><a href="javascript:showFormula('log(x)', 4, 0, 8.5);">y = log(x)</a></td>
+		<td><a href="javascript:showFormula('exp(x)', -2.0, 2.8, 8.5);">y = exp(x)</a></td>
+		<td><a href="javascript:showFormula('x * (x + 1) * (x - 2)', 0, -0.8, 5.5);">y = x * (x+1) * (x-2)</a></td>
+		<td><a href="javascript:showFormula('pow(cos(x*pi), 7)', 2.5, 0, 6);">y = pow(cos(x*pi), 7)</a></td></tr>
+	</table>
+</div></div>
+
+<script type="text/javascript">
+	// Get a reference to the needed elements.
+	var numPts = document.getElementById('numPts');
+	var canvas = document.getElementById('mainCanvas');
+	var context;
+
+	var width = 10;  // These will be corrected later.
+	var height = 10;
+	var xRange, xMin, xMax, _xMid, yRange, yMin, yMax, _yMid, _yAspect;
+
+	var slideButtonDown = false, slideTouchDown = false;
+	var zoomButtonDown = false, zoomTouchDown = false;
+	var stretchButtonDown = false, stretchTouchDown = false;
+	var lastMouseX = 0;
+	var lastMouseY = 0;
+	var lastTouchX1 = 0, lastTouchX2 = 0, lastTouchMidX = 0;
+	var lastTouchY1 = 0, lastTouchY2 = 0, lastTouchMidY = 0;
+	var lastTouchSpace = 0;
+	var pi = Math.PI;
+
+	var blackList = [";", "new", "ml", "$", ").", "ook", "ipt", "doc", "win",
+		"set", "get", "tim", "net", "post", "black", "y"];
+
+	// Check for the canvas element, and get its context.
+	if (canvas && canvas.getContext) {
+		// You can only initialize one context per canvas.
+		context = canvas.getContext('2d');
+		if (context) {
+			// Got the context.  Now we can start drawing.
+			setZoom(0, 0, 13);
+			plot();
+		}
+	}
+	
+	function closeTopBox() {
+		document.getElementById("topBox").style.display = "none";
+	}
+
+	// This accepts preset formulas from the table.
+	//
+	function showFormula(formula, xMid, yMid, range) {
+		document.getElementById('formula').value = formula;
+		setZoom(xMid, yMid, range);
+		plot();
+	}
+
+	// This function is used to set a new position and zoom level.
+	//
+	function setZoom(xMid, yMid, new_X_range, new_Y_range) {
+		_xMid = xMid;
+		_yMid = yMid;
+		xRange = new_X_range;
+		xMin = xMid - (xRange * 0.5);
+		xMax = xMid + (xRange * 0.5);
+
+		if (!new_Y_range) {
+			yRange = xRange * canvas.clientHeight / canvas.clientWidth;
+		}
+		else {
+			yRange = new_Y_range;
+		}
+		yMin = yMid - (yRange * 0.5);
+		yMax = yMid + (yRange * 0.5);
+		try {
+			_yAspect = yRange / (xRange * canvas.clientHeight / canvas.clientWidth);
+		}
+		catch (ex) { _yAspect = 1; }
+	}
+
+	// This function helps resize the canvas.
+	//
+	function resizeCanvas() {
+		if (_yAspect) {
+			yRange = _yAspect * xRange * canvas.clientHeight / canvas.clientWidth;
+			yMin = _yMid - (yRange * 0.5);
+			yMax = _yMid + (yRange * 0.5);
+			plot();
+		}
+	}
+    
+	// This is here to remove roundoff errors in the grid labels.
+	// I was seeing label names like 1.500000000000002.
+	//
+	function makeLabel(val) {
+		var label = Math.abs(Math.round(val * 10000000)).toString();
+		if (label.indexOf('e', 0) >= 0) {
+			label = val.toString();
+		}
+		else {
+			while (label.length < 8) {
+				label = "0" + label;
+			}
+			if (val < 0) {
+				label = "-" + label;
+			}
+			var dotPos = label.length - 7;
+			label = label.substr(0, dotPos) + "." + label.substr(dotPos);
+			while ((label[label.length - 1] == '0') && (label[label.length - 2] != '.')) {
+				label = label.substr(0, label.length - 1);
+			} 
+		}
+		return label;
+	}
+
+	// Try to weed out obvious bad stuff
+	//
+	function notOnBlackList(formula) {
+		if (formula.length > 140) {
+			alert("Please limit the formula to 140 characters.");
+			return false;
+		} else {
+			var n, lowFormula = formula.toLowerCase();
+			for (n = blackList.length - 1; n >= 0; --n) {
+				if (lowFormula.indexOf(blackList[n]) != -1) {
+					alert("Please avoid using  " + blackList[n]);
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	// This is the main plotting function
+	//
+	function plot() {
+		// WARNING! to website administrators who post this code online:
+		// It is considered insecure to call eval() on strings entered by
+		// the user, because this allows them to execute javascript code as if
+		// the code had come from your domain instead of the user's machine.
+		// One safer solution would be to make users download this as
+		// a ZIP file to their own machines, and run it locally there.
+		// Further reading:
+		// http://en.wikipedia.org/wiki/Eval
+		// http://en.wikipedia.org/wiki/Cross-site_scripting
+		var formula = document.getElementById('formula').value;
+		if (notOnBlackList(formula) != true) {
+			formula = "0";
+		}
+
+		grid();  // Draw the background first.
+
+		context.strokeStyle = '#00ED00';
+		context.lineWidth = 3;
+
+		var xPos = 0;
+		var brokenLine = 1;
+		var plotted = 0;
+
+		context.beginPath();
+		for (xPos = 0; xPos < (width + 1); xPos += 2) {
+			var x = (((xPos * xRange) / width) + xMin);
+			var y = 0.0;
+			var yPos = 0;
+			try {
+				with (Math) {
+					eval("y=" + formula);  // see WARNING above!!
+				}
+				if (isNaN(y) || (y == Number.NEGATIVE_INFINITY) ||
+					(y == Number.POSITIVE_INFINITY) || (Math.abs(y) > 2e5)) {
+					brokenLine = 2;
+					y = 0.0;
+				}
+				yPos = (((yMax - y) * height) / yRange);
+			}
+			catch (ex) {
+				brokenLine = 2;
+				if ((plotted == 0) && ((width - xPos) < 5)) {
+					plotted = 1;
+					alert(ex.message);
+				}
+			}
+			if (brokenLine > 0) {
+				if (brokenLine == 1) {
+					context.moveTo(xPos, yPos);
+				}
+				--brokenLine;
+			}
+			else {
+				context.lineTo(xPos, yPos);
+				++plotted;
+			}
+		}
+		context.stroke();
+		context.closePath();
+		numPts.innerHTML = "Plotted " + plotted + " points.";
+	}
+
+	// Create a blue grid as a background
+	//
+	function grid() {
+		// Set the canvas' internal image size to match the actual
+		// size it takes on the web page, and clear canvas.
+		height = canvas.height = canvas.clientHeight;
+		width = canvas.width = canvas.clientWidth;
+	    
+		// Because we reset the width & height above, the canvas clears itself.
+		// This is required by the draft spec, otherwise we could clear manually:
+		//context.fillStyle = '#FFFFFF'; // white background
+		//context.fillRect(0, 0, width, height);
+	    
+		// Compute numeric range of 14 pixels, the smallest grid square.
+		var rangeMin = xRange * 14 / width;
+		// Find the first round number above that range
+		var gridRange = Math.pow(10, Math.ceil(Math.log(rangeMin) / Math.LN10));
+		// See if we can reduce it by half (0.5) or one-fifth (0.2)
+		if ((gridRange * 0.2) > rangeMin) {
+			gridRange *= 0.2;
+		}
+		else if ((gridRange * 0.5) > rangeMin) {
+			gridRange *= 0.5;
+		}
+
+		var lineColorOrigin = '#000000';
+		var lineColorUnlabeled = '#DDE5FF';
+		var lineColorLabeled = '#8888ED';
+
+		// Setup some drawing options
+		context.lineWidth = 1;
+		context.textBaseline = 'bottom';
+
+		// Draw the X grid lines
+		//
+		var index = Math.floor(xMin / gridRange);
+		var xGrid = index * gridRange;
+		for (; xGrid <= xMax; xGrid = index * gridRange) {
+			var xPos = (((xGrid - xMin) * width) / xRange);
+			if (Math.abs(index) < 1e-9) {
+				// Mark the origin of the grid
+				if (xPos > 20) {
+					context.fillStyle = lineColorOrigin;
+					context.font = 'bold 12px sans-serif';
+					context.fillText("0.0", xPos + 2, height - 2);
+				}
+
+				context.strokeStyle = lineColorOrigin;
+			}
+			else if ((index % 5) != 0) {
+				// Draw an unlabeled grid line
+				context.strokeStyle = lineColorUnlabeled;
+			}
+			else {
+				// Draw and label a grid line
+				if (xPos > 20) {
+					context.fillStyle = lineColorLabeled;
+					context.font = 'normal 12px sans-serif';
+					context.fillText(makeLabel(xGrid), xPos + 2, height - 2);
+				}
+
+				context.strokeStyle = lineColorLabeled;
+			}
+
+			// Draw the actual line
+			context.beginPath();
+			context.moveTo(xPos, 0);
+			context.lineTo(xPos, height);
+			context.stroke();
+			context.closePath();
+	        
+			++index;
+		}
+
+		// Find the Y gridrange
+		var rangeMin = yRange * 14 / height;
+		var gridRange = Math.pow(10, Math.ceil(Math.log(rangeMin) / Math.LN10));
+		if ((gridRange * 0.2) > rangeMin) {
+			gridRange *= 0.2;
+		}
+		else if ((gridRange * 0.5) > rangeMin) {
+			gridRange *= 0.5;
+		}
+
+		// Draw the Y grid lines
+		//
+		index = Math.floor(yMin / gridRange);
+		var yGrid = index * gridRange;
+		for (; yGrid <= yMax; yGrid = index * gridRange) {
+			var yPos = (((yMax - yGrid) * height) / yRange);
+			if (Math.abs(index) < 1e-9) {
+				// Mark the origin of the grid
+				context.fillStyle = lineColorOrigin;
+				context.font = 'bold 12px sans-serif';
+				context.fillText("0.0", 2, yPos);
+
+				context.strokeStyle = lineColorOrigin;
+			}
+			else if ((index % 5) != 0) {
+				// Draw an unlabeled grid line
+				context.strokeStyle = lineColorUnlabeled;
+			}
+			else {
+				// Draw and label a grid line
+				context.fillStyle = lineColorLabeled;
+				context.font = 'normal 12px sans-serif';
+				context.fillText(makeLabel(yGrid), 2, yPos);
+
+				context.strokeStyle = lineColorLabeled;
+			}
+
+			// Draw the actual line
+			context.beginPath();
+			context.moveTo(0, yPos);
+			context.lineTo(width, yPos);
+			context.stroke();
+			context.closePath();
+
+			++index;
+		}
+	}
+
+	// Good reference site: http://www.w3schools.com/jsref/event_onmousedown.asp
+	//                 and: http://www.w3schools.com/jsref/dom_obj_event.asp
+
+	// Capture "onmousedown" events, and record the mouse button and position.
+	//
+	function clickCanvas(e) {
+		if (!e) var e = window.event;
+		// e.button: 0 is left, 1 is middle, 2 is right.
+		if ((e.button == 0) && (e.ctrlKey == true)) {
+			stretchButtonDown = true;
+		}
+		else if ((e.button == 0) && (e.shiftKey == false)) {
+			slideButtonDown = true;
+		}
+		else {
+			zoomButtonDown = true;
+		}
+		lastMouseX = e.clientX;
+		lastMouseY = e.clientY;
+		
+		if (stretchTouchDown || slideTouchDown || zoomTouchDown) {
+			slideButtonDown = false;
+			stretchButtonDown = false;
+			zoomButtonDown = false;
+			return true;
+		} else if (stretchButtonDown || slideButtonDown || zoomButtonDown) {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	// Turn off sliding/zooming if the mouse button is released, or the mouse leaves the canvas.
+	//
+	function releaseCanvas() {
+		slideButtonDown = false;
+		stretchButtonDown = false;
+		zoomButtonDown = false;
+	}
+
+	// On mouse move events, if a button is known to be down, slide or zoom the canvas.
+	//
+	function slideCanvas(e) {
+		var didSomething = false;
+		if (!e) { e = window.event; }
+		if (slideButtonDown) {
+			var slideX = (e.clientX - lastMouseX) * xRange / width;
+			var slideY = (e.clientY - lastMouseY) * yRange / height;
+			xMin -= slideX;
+			xMax = xMin + xRange;
+			yMin += slideY;
+			yMax = yMin + yRange;
+			_xMid = (xMin + xMax) * 0.5;
+			_yMid = (yMin + yMax) * 0.5;
+
+			lastMouseX = e.clientX;
+			lastMouseY = e.clientY;
+			plot();
+			didSomething = true;
+		}
+		else if (stretchButtonDown) {
+			var scaleX = Math.pow(0.995, (e.clientX - lastMouseX));
+			var scaleY = Math.pow(0.995, (lastMouseY - e.clientY));
+			var new_X_range = Math.min(2e5, Math.max(1e-6, (xRange * scaleX)));
+			var new_Y_range = Math.min(2e5, Math.max(1e-6, (yRange * scaleY)));
+
+			var xMid = (xMin + xMax) * 0.5;
+			var yMid = (yMin + yMax) * 0.5;
+
+			lastMouseX = e.clientX;
+			lastMouseY = e.clientY;
+
+			setZoom(xMid, yMid, new_X_range, new_Y_range);
+			plot();
+			didSomething = true;
+		}
+		else if (zoomButtonDown) {
+			var scale = Math.pow(0.995, (e.clientX - lastMouseX));
+			var new_X_range, new_Y_range;
+
+			// Make X and Y independently bump upper/lower limits and clamp zooming there.
+			if (scale < 1.0) {
+				if (xRange <= yRange) {
+					new_X_range = Math.max(1e-6, (xRange * scale));
+					new_Y_range = yRange * new_X_range / xRange;
+				}
+				else {
+					new_Y_range = Math.max(1e-6, (yRange * scale));
+					new_X_range = xRange * new_Y_range / yRange;
+				}
+			}
+			else {
+				if (xRange >= yRange) {
+					new_X_range = Math.min(2e5, (xRange * scale));
+					new_Y_range = yRange * new_X_range / xRange;
+				}
+				else {
+					new_Y_range = Math.min(2e5, (yRange * scale));
+					new_X_range = xRange * new_Y_range / yRange;
+				}
+			}
+
+			var xMid = (xMin + xMax) * 0.5;
+			var yMid = (yMin + yMax) * 0.5;
+
+			lastMouseX = e.clientX;
+			lastMouseY = e.clientY;
+
+			setZoom(xMid, yMid, new_X_range, new_Y_range);
+			plot();
+			didSomething = true;
+		}
+
+		if (didSomething) {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	//
+	// Touch event handling
+	//
+	function handleTouchStart(e) {
+		var didSomething = false;
+		if (!e) { e = window.event; }
+		
+		slideTouchDown = false;
+		stretchTouchDown = false;
+		zoomTouchDown = false;
+		
+		if (e.touches.length === 1) {
+			slideTouchDown = true;
+			lastTouchX1 = e.touches[0].clientX;
+			lastTouchY1 = e.touches[0].clientY;
+			didSomething = true;
+		} else if (e.touches.length === 2) {
+			zoomTouchDown = true;
+			var touch1 = e.touches[0];
+			var touch2 = e.touches[1];
+			if (touch1.identifier > touch2.identifier) {
+				touch2 = e.touches[0];
+				touch1 = e.touches[1];
+			}
+			lastTouchX1 = touch1.clientX;
+			lastTouchY1 = touch1.clientY;
+			lastTouchX2 = touch2.clientX;
+			lastTouchY2 = touch2.clientY;
+			lastTouchMidX = (lastTouchX1 + lastTouchX2) * 0.5;
+			lastTouchMidY = (lastTouchY1 + lastTouchY2) * 0.5;
+			var sx = Math.abs(lastTouchX1 - lastTouchX2);
+			var sy = Math.abs(lastTouchY1 - lastTouchY2);
+			lastTouchSpace = Math.sqrt((sx * sx) + (sy * sy));
+			didSomething = true;
+		}
+
+		if (didSomething) {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	function handleTouchMove(e) {
+		var didSomething = false;
+		if (!e) { e = window.event; }
+		
+		if (slideTouchDown) {
+			if (e.touches.length === 1) {
+				var slideX = (e.touches[0].clientX - lastTouchX1) * xRange / width;
+				var slideY = (e.touches[0].clientY - lastTouchY1) * yRange / height;
+				xMin -= slideX;
+				xMax = xMin + xRange;
+				yMin += slideY;
+				yMax = yMin + yRange;
+				_xMid = (xMin + xMax) * 0.5;
+				_yMid = (yMin + yMax) * 0.5;
+
+				lastTouchX1 = e.touches[0].clientX;
+				lastTouchY1 = e.touches[0].clientY;
+				plot();
+				didSomething = true;
+			}
+		} else if (zoomTouchDown) {
+			if (e.touches.length === 2) {
+				var touch1 = e.touches[0];
+				var touch2 = e.touches[1];
+				if (touch1.identifier > touch2.identifier) {
+					touch2 = e.touches[0];
+					touch1 = e.touches[1];
+				}
+				var touchMidX = (touch1.clientX + touch2.clientX) * 0.5;
+				var touchMidY = (touch1.clientY + touch2.clientY) * 0.5;
+				var sx = Math.abs(touch1.clientX - touch2.clientX);
+				var sy = Math.abs(touch1.clientY - touch2.clientY);
+				var newTouchSpace = Math.sqrt((sx * sx) + (sy * sy));
+				var xMid = (xMin + xMax) * 0.5;
+				var yMid = (yMin + yMax) * 0.5;
+
+				if ((newTouchSpace > 0) && (lastTouchSpace > 0)) {
+					var zoom = lastTouchSpace / newTouchSpace;
+					var new_xMin = xMin + ((lastTouchX1 * xRange) - (touch1.clientX * xRange * zoom)) / width;
+					var new_yMax = yMax - ((lastTouchY1 * yRange) - (touch1.clientY * yRange * zoom)) / height;
+					xRange *= zoom;
+					yRange *= zoom;
+					xMid = new_xMin + xRange * 0.5;
+					yMid = new_yMax - yRange * 0.5;
+				} else {
+					// Just slide the canvas
+					var slideX = (touchMidX - lastTouchMidX) * xRange / width;
+					var slideY = (touchMidY - lastTouchMidY) * yRange / height;
+					xMid -= slideX;
+					yMid += slideY;
+				}
+
+				setZoom(xMid, yMid, xRange, yRange);
+				plot();
+				
+				lastTouchX1 = touch1.clientX;
+				lastTouchY1 = touch1.clientY;
+				lastTouchX2 = touch2.clientX;
+				lastTouchY2 = touch2.clientY;
+				lastTouchMidX = touchMidX;
+				lastTouchMidY = touchMidY;
+				lastTouchSpace = newTouchSpace;
+				didSomething = true;
+			}
+		}
+
+		if (didSomething) {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	function handleTouchEnd(e) {
+		if (!e) { e = window.event; }
+		
+		slideTouchDown = false;
+		stretchTouchDown = false;
+		zoomTouchDown = false;
+		slideButtonDown = false;
+		stretchButtonDown = false;
+		zoomButtonDown = false;
+		
+		if (e.touches.length == 1) {
+			// Switching from 2-touch to 1-touch mode.
+			slideTouchDown = true;
+			lastTouchX1 = e.touches[0].clientX;
+			lastTouchY1 = e.touches[0].clientY;
+		}
+	}
+
+	window.onresize = resizeCanvas;
+
+	var topC = document.getElementById("topContainer");
+	var bottomC = document.getElementById("bottomContainer");
+
+	canvas.oncontextmenu = function() { return false; };
+	topC.oncontextmenu = function() { return false; };
+	bottomC.oncontextmenu = function() { return false; };
+	
+	document.getElementById("topBox").addEventListener("mousedown",
+		function(e) { e.stopPropagation(); }, false);
+	document.getElementById("bottomBox").addEventListener("mousedown",
+		function(e) { e.stopPropagation(); }, false);
+
+	document.getElementById("topBox").addEventListener("contextmenu",
+		function(e) { e.stopPropagation(); }, false);
+	document.getElementById("bottomBox").addEventListener("contextmenu",
+		function(e) { e.stopPropagation(); }, false);
+
+	document.getElementById("topBox").addEventListener("touchstart",
+		function(e) { e.stopPropagation(); }, false);
+	document.getElementById("bottomBox").addEventListener("touchstart",
+		function(e) { e.stopPropagation(); }, false);
+
+	document.addEventListener("mousemove", slideCanvas, false);
+	document.addEventListener("mouseup", releaseCanvas, false);
+	//document.addEventListener("mouseout", releaseCanvas, false);
+	
+    canvas.addEventListener('touchstart', handleTouchStart, false);
+    topC.addEventListener('touchstart', handleTouchStart, false);
+    bottomC.addEventListener('touchstart', handleTouchStart, false);
+    document.addEventListener('touchmove', handleTouchMove, false);
+    document.addEventListener('touchend', handleTouchEnd, false);
+
+</script>
+</body>
+</html>

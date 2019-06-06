@@ -1,0 +1,1 @@
+//Object.create()法:直接用Object.create()生成实例，不需要用到newexports.UserEntity = {	username:"", 	password:"",	email:"",	post:0,	reply:0,	type:1,	status:0,	regtime:"",	logtime:""};

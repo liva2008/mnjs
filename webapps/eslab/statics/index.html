@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>test</title>
+<script language="javascript" src="/test/statics/mustache.js">
+</script>
+<script language="javascript">
+function test(){
+	var template = self.document.documentElement.innerHTML;
+	var model = {helloworld:'Hello World',"liva":'I am Liva'};
+	self.document.documentElement.innerHTML = Mustache.to_html(template,model);
+}
+</script>
+</head>
+
+<body onload="test();">
+{{helloworld}}
+<form name="hello" action="/test/index/test1" method="post">
+<input type="text" name="wd" id="kw" maxlength="100">
+<input type="text" name="wd1" id="kw1" maxlength="100">
+<input type="submit" value="Ìב ½»" id="su">
+</form>
+{{liva}}
+</body>
+</html>

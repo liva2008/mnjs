@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>MNJS IDE</title>
+	<link rel="stylesheet" type="text/css" href="./themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="./themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="./demo.css">
+	<script type="text/javascript" src="./jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="./jquery.easyui.min.js"></script>
+</head>
+<body>
+	<div style="margin:10px 0;"></div>
+	
+	<table class="easyui-datagrid" title="Projects" 
+			style="width:700px;height:250px" 
+			url="./datagrid_data1.json"  
+            toolbar="#toolbar" pagination="true"  
+            rownumbers="true" fitColumns="true" singleSelect="true">
+		<thead>
+			<tr>
+				<th data-options="field:'itemid',width:80">Item ID</th>
+				<th data-options="field:'productid',width:100">Product</th>
+				<th data-options="field:'listprice',width:80,align:'right'">List Price</th>
+				<th data-options="field:'unitcost',width:80,align:'right'">Unit Cost</th>
+				<th data-options="field:'attr1',width:250">Attribute</th>
+				<th data-options="field:'status',width:60,align:'center'">Status</th>
+			</tr>
+		</thead>
+	</table>
+	<div id="toolbar">  
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">New Project</a>  
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Remove Project</a>  
+    </div>  
+</body>
+</html>

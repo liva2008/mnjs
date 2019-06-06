@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>MNJS IDE---project</title>
+	<link rel="stylesheet" type="text/css" href="/ide/statics/easyui/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/ide/statics/easyui/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="/ide/statics/easyui/demo/demo.css">
+	<link rel="stylesheet" href="/ide/statics/codemirror/lib/codemirror.css">
+	<script src="/ide/statics/codemirror/lib/codemirror.js"></script>
+    <script src="/ide/statics/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="/ide/statics/codemirror/addon/edit/continuecomment.js"></script>
+    <script src="/ide/statics/codemirror/mode/javascript/javascript.js"></script>
+	<script type="text/javascript" src="/ide/statics/easyui/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="/ide/statics/easyui/jquery.easyui.min.js"></script>
+	<style type="text/css">
+      .CodeMirror {
+        border: 1px solid #eee;
+		height: auto;
+      }
+      .CodeMirror-scroll {
+        overflow-y: hidden;
+        overflow-x: hidden;
+      }
+    </style>
+<script language="javascript">
+function savefile(name, content){
+	//alert(content);
+	$.ajax({
+		type: "POST",
+		url: "/ide/mnjs/savefile/{{type}}",
+		data: "name=" + name+"&content="+content,
+		success: function(msg){
+			$.messager.alert('save', name + ' save ' + msg, 'info');
+		}
+	});
+}
+
+function runfile(name){
+	//alert(name);
+	$.ajax({
+		type: "POST",
+		url: "/ide/mnjs/runfile/{{type}}",
+		data: "name=" + name,
+		success: function(msg){
+			document.getElementById('output').innerHTML = msg;
+			//$.messager.alert('result', msg, 'info');
+		}
+	});
+}
+
+function status(){
+	//alert(name);
+	$.ajax({
+		type: "GET",
+		url: "/ide/mnjs/status",
+		success: function(msg){
+			document.getElementById('output').innerHTML = msg;
+			//$.messager.alert('result', msg, 'info');
+		}
+	});
+}
+
+var t = '{{type}}';
+
+if(t === 'webapps'){
+	setInterval(status, 1000);
+}
+</script>
+</head>
+
+<body>
+	<div class="easyui-layout" fit="true">
+		<div data-options="region:'west',split:true" title="MNJS Project" style="width:200px;">
+			<div style="margin:10px 0px;"></div>
+			<div style="margin:5px 5px;">
+			<a title="Create folder" href="javascript:folderadd()" calss="easyui-linkbutton">
+			<img  src="/ide/statics/images/folder-add.png" width="16" height="16">
+			</a>
+			<a title="Delete folder" href="#" onclick='javascript:folderdelete()' calss="easyui-linkbutton">
+			<img src="/ide/statics/images/folder-delete.png" width="16" height="16">
+			</a>
+			<a title="Rename folder" href="#" onclick='javascript:folderrename()' calss="easyui-linkbutton">
+			<img src="/ide/statics/images/folder-edit.png" width="16" height="16">
+			</a>
+			<a title="Create file" href="#" onclick='javascript:filenew()' calss="easyui-linkbutton">
+			<img src="/ide/statics/images/document-new.png" width="16" height="16">
+			</a>
+			<a title="Open file" href="#" onclick='javascript:fileopen()' calss="easyui-linkbutton">
+			<img src="/ide/statics/images/document-open.png" width="16" height="16">
+			</a>
+			<a title="Delete file" href="#" onclick='javascript:filedel()' calss="easyui-linkbutton">
+			<img src="/ide/statics/images/document-delete.png" width="16" height="16">
+			</a>
+			<a title="Rename file" href="#" onclick='javascript:fileren()' calss="easyui-linkbutton">
+			<img src="/ide/statics/images/document-edit.png" width="16" height="16">
+			</a>
+			<img src="/ide/statics/images/upload.png" width="16" height="16">
+			</div>
+			<ul id="dd" class="easyui-tree" data-options="url:'/ide/mnjs/tree/{{project}}/{{type}}',animate:true">
+			</ul>
+		</div>
+		<div  border="false"  region="center">
+			<div id="tt" class="easyui-tabs" fit="true">			
+			</div>
+		</div>
+		<div id="output" data-options="region:'south',split:true" title="Output" style="height:120px;">
+		</div>
+	</div>
+<script>
+
+var getID = function (){
+	var d = new Date();
+	return d.getTime() + '' + parseInt(Math.random() * 100000);
+};
+
+function getParentPath(){
+	var path = [];
+	var ret ="/";
+	var select = $('#dd').tree('getSelected');
+	var root = $('#dd').tree('getRoot');
+	var parent = $('#dd').tree('getParent', select.target);
+	
+	while(parent.text != root.text){
+		path.push(parent.text);
+		parent = $('#dd').tree('getParent', parent.target);
+	}
+	
+	path.push(parent.text);
+	
+	path.reverse();
+	
+	ret += path.join("/");
+	
+	return ret;
+}
+
+function folderadd(){
+	var select = $('#dd').tree('getSelected');
+	var leaf = $('#dd').tree('isLeaf', select.target);
+	var root = $('#dd').tree('getRoot');
+	if(select && !leaf){
+		$.messager.prompt('Create Directory', 
+			'Please input your directory name',
+			function (r){
+				if(r){
+					var dir = '';
+					if(select.text == root.text){
+						dir = '/' + select.text + '/' +r;
+					}
+					else{
+						dir = getParentPath() + '/' + select.text + '/' +r;
+					}
+					//alert(dir);
+					$.ajax({
+						type: "POST",
+						url: "/ide/mnjs/mkdir/{{type}}",
+						data: "dir=" + dir,
+						success: function(msg){
+							if(msg == 'ok'){
+								$('#dd').tree('append', {
+									parent:select.target,
+									data:[{
+										id:getID(),
+										text:r,
+										state:'closed',
+										children:[{text:'flag'}]
+									}]
+								});
+							}
+							else{
+								$.messager.alert('error', 
+									'Directory making error!', 'error');
+							}
+						}
+					});
+				}
+			});
+	}
+	else{
+		//alert('you don\'t select the parent directory!');
+		$.messager.alert('error', 
+			'you don\'t select the parent directory!', 'error');
+	}
+}
+
+function folderdelete(){
+	var select = $('#dd').tree('getSelected');
+	var leaf = $('#dd').tree('isLeaf', select.target);
+	var root = $('#dd').tree('getRoot');
+	if(select && !leaf){
+		var children = $('#dd').tree('getChildren', select.target);
+		$.messager.confirm('Delete Directory', 
+		'Do you want to delete the '+select.text+' directory',
+		function (r){
+			if(r){
+				var dir = '';
+				if(select.text == root.text){
+					dir = '/' + select.text;
+				}
+				else{
+					dir = getParentPath() + '/' + select.text;
+				}
+				//alert(dir);
+				$.ajax({
+					type: "POST",
+					url: "/ide/mnjs/rmdir/{{type}}",
+					data: "dir=" + dir,
+					success: function(msg){
+						if(msg == 'ok'){
+							$('#dd').tree('remove', select.target);
+						}
+						else{
+							$.messager.alert('error', 
+								'Directory deleting error!', 'error');
+						}
+					}
+				});
+			}
+		});
+	}
+	else{
+		//alert('you don\'t select the parent directory!');
+		$.messager.alert('error', 
+			'you don\'t select the delete directory!', 'error');
+	}
+}
+
+function folderrename(){
+	var select = $('#dd').tree('getSelected');
+	var leaf = $('#dd').tree('isLeaf', select.target);
+	var root = $('#dd').tree('getRoot');
+	if(select && !leaf){
+		$.messager.prompt('Rename Directory', 
+			'Please input your directory new name',
+			function (r){
+				if(r){
+					var newdir = '';
+					var olddir = '';
+					if(select.text == root.text){
+						olddir = '/' + select.text
+						newdir = '/' + r;
+					}
+					else{
+						newdir = getParentPath() + '/' +r;
+						olddir = getParentPath() + '/' + select.text
+					}
+					//alert(dir);
+					$.ajax({
+						type: "POST",
+						url: "/ide/mnjs/rendir/{{type}}",
+						data: "olddir=" + olddir+"&newdir="+newdir,
+						success: function(msg){
+							if(msg == 'ok'){
+								$('#dd').tree('update', {
+									target:select.target,
+									text:r
+								});
+							}
+							else{
+								$.messager.alert('error', 
+									'Directory renaming error!', 'error');
+							}
+						}
+					});
+				}
+			});
+	}
+	else{
+		//alert('you don\'t select the parent directory!');
+		$.messager.alert('error', 
+			'you don\'t select the parent directory!', 'error');
+	}
+}
+
+function filenew(){
+	var select = $('#dd').tree('getSelected');
+	var leaf = $('#dd').tree('isLeaf', select.target);
+	var root = $('#dd').tree('getRoot');
+	if(select && !leaf){
+		$.messager.prompt('Create new file', 
+			'Please input your file name and extname',
+			function (r){
+				if(r){
+					var file = '';
+					if(select.text == root.text){
+						file = '/' + select.text + '/' +r;
+					}
+					else{
+						file = getParentPath() + '/' + select.text + '/' +r;
+					}
+					
+					$.ajax({
+						type: "POST",
+						url: "/ide/mnjs/newfile/{{type}}",
+						data: "file=" + file,
+						success: function(msg){
+							if(msg == 'ok'){
+								$('#dd').tree('append', {
+									parent:select.target,
+									data:[{
+										id:getID(),
+										text:r
+									}]
+								});
+							}
+							else{
+								$.messager.alert('error', 
+									'Directory making error!', 'error');
+							}
+						}
+					});
+				}
+			});
+	}
+	else{
+		//alert('you don\'t select the parent directory!');
+		$.messager.alert('error', 
+			'you don\'t select the parent directory!', 'error');
+	}
+}
+
+function fileopen(){
+	var select = $('#dd').tree('getSelected');
+	var leaf = $('#dd').tree('isLeaf', select.target);
+	var root = $('#dd').tree('getRoot');
+	if(select && leaf){
+		var file = getParentPath() + '/' + select.text;
+		
+		$.ajax({
+			type: "POST",
+			url: "/ide/mnjs/openfile/{{type}}",
+			data: "file=" + file,
+			success: function(msg){
+				$('#tt').tabs('add',{
+					title:select.text,
+					content:msg,
+					closable:true,
+				});
+			}
+		});
+	}
+	else{
+		$.messager.alert('error', 
+			'you don\'t select the open file!', 'error');
+	}
+}
+
+function filedel(){
+	var select = $('#dd').tree('getSelected');
+	var leaf = $('#dd').tree('isLeaf', select.target);
+	var root = $('#dd').tree('getRoot');
+	if(select && leaf){
+		var file = getParentPath() + '/' + select.text;
+		
+		$.messager.confirm('Delete file', 
+		'Do you want to delete the '+select.text+' file',
+		function (r){
+			if(r){
+				$.ajax({
+					type: "POST",
+					url: "/ide/mnjs/delfile/{{type}}",
+					data: "file=" + file,
+					success: function(msg){
+						if(msg == 'ok'){
+							$('#dd').tree('remove', select.target);
+						}
+						else{
+							$.messager.alert('error', 
+								'Directory deleting error!', 'error');
+						}
+					}
+				});
+			}
+		});
+	}
+	else{
+		$.messager.alert('error', 
+			'you don\'t select the delete file!', 'error');
+	}
+}
+
+function fileren(){
+	var select = $('#dd').tree('getSelected');
+	var leaf = $('#dd').tree('isLeaf', select.target);
+	var root = $('#dd').tree('getRoot');
+	if(select && leaf){
+		$.messager.prompt('Rename file', 
+			'Please input your file new name',
+			function (r){
+				if(r){
+					var newfile = getParentPath() + '/' +r;
+					var oldfile = getParentPath() + '/' + select.text;
+
+					//alert(dir);
+					$.ajax({
+						type: "POST",
+						url: "/ide/mnjs/renfile/{{type}}",
+						data: "oldfile=" + oldfile+"&newfile="+newfile,
+						success: function(msg){
+							if(msg == 'ok'){
+								$('#dd').tree('update', {
+									target:select.target,
+									text:r
+								});
+							}
+							else{
+								$.messager.alert('error', 
+									'Directory renaming error!', 'error');
+							}
+						}
+					});
+				}
+			});
+	}
+	else{
+		//alert('you don\'t select the parent directory!');
+		$.messager.alert('error', 
+			'you don\'t select the rename file!', 'error');
+	}
+}
+
+$('#dd').tree({
+	onDblClick: function(node){
+		var select = $('#dd').tree('getSelected');
+		var leaf = $('#dd').tree('isLeaf', select.target);
+		//alert(leaf);
+		
+		if(select && leaf){
+			var file = getParentPath() + '/' + node.text;
+			
+			$.ajax({
+				type: "POST",
+				url: "/ide/mnjs/openfile/{{type}}",
+				data: "file=" + file,
+				success: function(msg){
+					$('#tt').tabs('add',{
+						title:node.text,
+						content:msg,
+						closable:true,
+					});
+				}
+			});
+		}
+		else{
+			$.messager.alert('error', 
+			'you don\'t select the open file!', 'error');
+		}
+	}
+	
+});
+
+$('#tt').tabs({
+	onClose:function(title,index){
+		$.messager.alert('close', title);
+	}
+});
+</script>
+</body>
+</html>

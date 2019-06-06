@@ -1,0 +1,39 @@
+﻿<!--utf8编码-->
+<html>
+<head>
+<title>用户列表</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<%view%>
+</head>
+
+<body>
+<h1>用户列表</h1>
+<h3 style="color:red">
+<ul>
+<li style="float:left;width:100"><div>用户头像</div></li>
+<li style="float:left;width:200"><div>用户帐号</div></li>
+<li style="float:left;width:200"><div>用户密码</div></li>
+<li style="float:left;width:200"><div>电子邮箱</div></li>
+<li style="float:left;width:100"><div>用户状态</div></li>
+<li style="float:left;width:100"><div>用户操作</div></li>
+</ul>
+</h3>
+<br>
+{{#users}}
+<ul>
+<!-- 从文件系统中访问文件
+<li style="float:left;width:100"><div><img src="/test/upload/{{userhead}}" width=32 height=32></div></li>
+-->
+<!-- 从数据库中访问文件 -->
+<li style="float:left;width:100"><div><img src="/test/user/download/{{userhead}}/{{extname}}" width=32 height=32></div></li>
+<li style="float:left;width:200"><div>{{username}}</div></li>
+<li style="float:left;width:200"><div>{{password}}</div></li>
+<li style="float:left;width:200"><div>{{email}}</div></li>
+<li style="float:left;width:100"><div>{{status}}</div></li>
+<li style="float:left;width:100"><div><a href="/test/user/del/{{username}}">删除</a> <a href="/test/user/update/{{username}}">修改</a></div></li></ul>
+</ul>
+<br>
+{{/users}}
+<%page%>
+</body>
+</html>

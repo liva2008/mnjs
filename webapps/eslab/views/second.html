@@ -1,0 +1,30 @@
+﻿<!--utf8编码-->
+<html>
+<head>
+<title>类别管理</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+</head>
+
+<body>
+<h1>嵌入式系统实验室</h1>
+<h2><div align="right">Embedded System Laboratory</div></h2>
+<hr>
+<h2> 二级分类 </h2>
+<form name="classes" action="/eslab/classes/addsecond" method="post">
+<div style="height:30px">一级分类：
+<select id="first" name="first">
+{{#classes}}
+  <option value ="{{name}}">{{name}}</option>
+{{/classes}}
+</select>
+</div>
+<div style="height:30px">分类名称：<input type="text" name="sname" id="sname" maxlength="100"></div>
+<div style="height:30px">管 理 员：<input type="text" name="sadmin" id="sadmin" maxlength="100"></div>
+<div style="height:30px">类别描述：<input type="text" name="sdescription" id="sdescription" maxlength="100"></div>
+<div style="height:30px"><input type="reset" value="重置" id="reset"> <input type="submit" value="创建" id="submit"></div>
+</form>
+<hr>
+<h3><div align="center">湖北师范学院物电学院电工电子实验中心</div></h3>
+<h3><div align="center">CopyRight @ 2013.10</div></h3>
+</body>
+</html>
