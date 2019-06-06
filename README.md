@@ -33,7 +33,7 @@ MNJS框架的主要功能如下：
 1).将mnjs.zip包用Winrar或7z解压缩软件可以解压到任意位置，本框架全部采用相对路径，本例直接解到D盘。
 2).启动mongodb数据库：用资源管理器打开D:\mnjs\mongodbserver, 然后双击run.bat启动数据库,数据库启动成功界面如图1所示。
 
-![ Mongodb 数据库](images/1.png "图1 Mongodb 数据库") 
+![ Mongodb 数据库](images/1.png "图1 Mongodb 数据库")   
 图1 Mongodb 数据库 
 
 3).静态配置MNJS框架：相关配置信息在D:\mnjs\config.js文件中，具体如下：
