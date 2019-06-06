@@ -1,6 +1,9 @@
 mnjs
 ====
 
+---
+[TOC]
+---
 ## 1 简介
 MNJS是基于Mongodb和Nodejs 开发数据库驱动的完整Web框架，完全采用Javascript语言。MNJS是由Mongodb、Nodejs和JavaScript三个单词中大写字母组合而成，其中mongodb是一个基于类似json的bjson格式可扩展的高性能的No SQL开源分布式数据库，nodejs是用于构建的可扩展的高性能的事件驱动、非阻塞I/O的网络应用程序的Javascript开发平台。
 MNJS框架的主要功能如下：
