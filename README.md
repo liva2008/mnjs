@@ -32,8 +32,10 @@ MNJS框架的主要功能如下：
 以Windows xp操作系统为例，安装说明如下：
 1).将mnjs.zip包用Winrar或7z解压缩软件可以解压到任意位置，本框架全部采用相对路径，本例直接解到D盘。
 2).启动mongodb数据库：用资源管理器打开D:\mnjs\mongodbserver, 然后双击run.bat启动数据库,数据库启动成功界面如图1所示。
+
 ![ Mongodb 数据库](images/1.png "图1 Mongodb 数据库") 
 图1 Mongodb 数据库 
+
 3).静态配置MNJS框架：相关配置信息在D:\mnjs\config.js文件中，具体如下：
 
 ```javascript {.line-numbers}
@@ -79,8 +81,10 @@ MNJS框架的主要功能如下：
  };
 ```
 4).启动web服务器：在开始菜单上点击“运行”菜单，打开运行对话框，输入cmd，点击确定打开命令行黑窗口，输入D:，将盘符改D盘，再输入cm mnjs，进入mnjs目录。输入node server.js回车即可启动服务器，服务器启动成功如图2所示。
+
 ![图2 web服务器启动界面](images/2.png "图2 web服务器启动界面")  
 图2 web服务器启动界面 
+
 5).动态配置MNJS框架，使用方法如下：
 Node server.js [options]
 其中options为可选项，若options省略，则全部采用静态配置，否则采用动态配置。该框架提供5个动态配置选项如下：
@@ -90,21 +94,26 @@ Temp选项：用于设置HTML模板是在服务器端渲染还是客户端渲染
 Status选项：设置服务状态为有状态还是无状态，如果采用集群模式，建议选用无状态模式；
 Multi选项：用于设置服务器是单进程运行还是多进程运行，如果是多核CPU或 多CPU则建议开启multi选项。
 6).测试安装：打开浏览器，输入http://localhost:8000/test/user/list地址，如果出现如图3所示界面，则表示mongodb数据库、web服务器、MNJS框架安装配置成功。
+
 ![图3 测试页面](images/3.png "图3 测试页面")  
 图3 测试页面 
 
 ### 2.3 集成开发环境
 本框架提供一个基于Web的集成开发环境MNJS IDE，可以在浏览器中进行Web应用程序和原生应用程序的开发工作。本IDE主要提供了工程管理器和开发环境两个主要功能。访问地址为http://localhost:8000/ide/mnjs/projects。工程管理器主要管理多个Web应用程序如图4所示，可以新建工程、删除工程和编辑工程。新建工程时可以选择工程类型如图5所示。
+
 ![图4 工程管理器](images/4.png "图4 工程管理器")  
 图4 工程管理器  
+
 ![图5 新建工程](images/5.png "图5 新建工程")  
 图5 新建工程  
+
 开发环境主要工程开发编辑功能如图6所示，可以管理工程中的目录和文件，且可以多文件同时编写Web应用程序。
 ![图6 开发环境](images/6.png "图6 开发环境")  
 图6 开发环境
 
 ## 3 MVC框架
 MVC模式（三层架构模式）（Model-View-Controller）是软件工程中的一种软件架构模式，把软件系统分为三个基本部分：模型（Model）、视图（View）和控制器（Controller）。如图7所示。
+
 ![图7 MVC模型](images/7.png "图7 MVC模型")  
 图7 MVC模型  
 
@@ -128,6 +137,7 @@ MVC框架为模型Model、视图View、控制器Controller的一种流行的软�
 11）Mnjs.js文件为框架文件；
 12）Server.js文件为服务器文件；
 Service.js文件为服务器伺服文件。
+
 ![图8 框架根目录](images/8.png "图8 框架根目录")  
 图8 框架根目录  
 
@@ -139,6 +149,7 @@ Service.js文件为服务器伺服文件。
 5) Upload目录：Web应用程序上传根目录；
 6) Config.js文件：Web应用程序的配置文件。
 本框架的每个Web应用程序结构按如上结构组织。
+
 ![图9  Web应用程序目录](images/9.png "图9  Web应用程序目录")  
 图9  Web应用程序目录  
 
@@ -172,6 +183,7 @@ user.welcome = function (request, response){
 ```
 
 运行结果如图12所示：
+
 ![图12  GET方法运行结果](images/12.png "")  
 图12  GET方法运行结果  
 
@@ -207,11 +219,15 @@ user.processwelcome1 = function (request, response){
 }
 ```
 Welcome1请求页面如图13所示：
+
 ![图13 welcome1请求页面](images/13.png "")  
 图13 welcome1请求页面  
+
 Welcome1响应处理结果如图14所示。
+
 ![图14 Welcome1响应处理结果](images/14.png "")  
-图14 Welcome1响应处理结果  
+图14 Welcome1响应处理结果 
+
 3) Session会话
 HTTP协议是无状态协议即不记录用户请求状态，要实现动态服务必须让用户的每次请求带上状态，才实现如登录功能的有状态服务。Session会话功能的实现与cookie是分不开的，服务器端也要保存会话相关信息，客户端会话相关信息由cookie保存，本框架的服务器端会话保存信息功能提供了两种实现方式：第一种本框架提供session功能将会话相关信息直接保存在内存中，一旦服务器重启session信息全部丢失；第二种本框架不实现session功能，借助数据库存储会话信息，即使服务器重启，session信息仍然存在。第一种方式访问session效率比第二种式要高，并且开发难度也较第二种方式低。但如果要实现服务器集群的方式，则第一种方式存在session信息共享的问题，而第二种方式则不存在。因此，建议小规模的web应用则采用第一种方式，集群方式则采用第二种方式。
 这两种方式的选择通过status选项实现，当status=true时则使用第一种方式即session信息存在内存中，当status=false 时则使用第二种方式即session信息存在数据库中。
@@ -224,10 +240,12 @@ index.hello = function(request, response, session){
 }
 ```
 当访问http://localhost:8000/test/index/hello时会在服务器端产生一个session，如图15所示：
+
 ![图15 服务器端session信息](images/15.png "")  
 图15 服务器端session信息  
 
 第二种方式则要利用数据库功能实现session信息的存储即在数据库增加session信息相关字段，前端通过cookie存储会话信息，通过response.setHeader('Set-Cookie', ['sid=liva'])方法设置cookie。前端cookie信息查看如图16所示。
+
 ![图16 cookie存储的会话信息](images/16.png)  
 图16 cookie存储的会话信息  
 
@@ -249,8 +267,10 @@ index.hello = function(request, response, session){
 }
 ```
 运行结果如图17所示：
+
 ![图17 上传页面](images/17.png)  
 图17 上传页面  
+
 上传响应的action为：
 ```javascript  {.line-numbers}
 user.processupload1 = function(request, response){
@@ -258,6 +278,7 @@ user.processupload1 = function(request, response){
 }
 ```
 响应页面运行结果如图18所示：
+
 ![图18 文件上传响应结果](images/18.png)  
 图18 文件上传响应结果  
 
@@ -289,5 +310,7 @@ config.getReadDir = function() {
 ```
 默认设置Web应用程序目录中upload和statics两个目录为静态资源可读目录。
 按照静态URL如图11所示格式即可访问静态资源，如图19所示。
+
 ![图19 静态资源访问结果](images/19.png)  
 图19 静态资源访问结果  
+
